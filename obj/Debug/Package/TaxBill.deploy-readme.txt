@@ -1,0 +1,63 @@
+﻿
+===========================
+Önkoşullar :
+--------------------------
+Bu Web paketini dağıtmak için Web Dağıtımı'nın (msdeploy.exe) .cmd dosyasını çalıştıran bilgisayara yüklenmesi gerekir. Web Dağıtımı'nın nasıl yükleneceği konusunda bilgi için şu URL'i ziyaret edin:
+https://go.microsoft.com/?linkid=9278654
+Bu toplu dosya, paket dosyası "TaxBill.zip" ile isteğe bağlı olarak sağlanan parametreler dosyasının "TaxBill.SetParameters.xml", ortam değişkenine bağlı olarak, aynı klasörde veya hedef klasörde olmasını gerektirir.
+
+===========================
+Kullanım:
+--------------------------
+TaxBill.deploy.cmd [/T|/Y] [/M:Bilgisayar Adı] [/U:Kullanıcı Adı] [/P:Parola] [/G:Geçici Aracı Kullanma] [Ek msdeploy.exe bayrakları ...]
+
+
+===========================
+Gerekli Bayraklar:
+--------------------------
+/T:
+	"-whatif" bayrağıyla msdeploy.exe'yi çağırır. Bu, dağıtımın benzetimini yapar, paketi dağıtmaz. Onun yerine, paketi gerçekten dağıttığınızda ne olacağına açıklayan bir rapor oluşturur.
+/Y:
+	"-whatif" flag bayrağı olmadan msdeploy.exe'yi çağırır. Bu, paketi geçerli makineye veya bir hedef sunucuya dağıtır. /T bayrağı kullanılarak oluşturulmuş çıktıyı doğruladıktan sonra /Y kullanın.
+
+Not: /T ve /Y'yi aynı komutta kullanmayın.
+
+===========================
+İsteğe Bağlı Bayraklar:
+--------------------------
+ Varsayılan olarak bu komut dosyası, aracı hizmeti olmadan geçerli kullanıcı kimlik bilgileriyle çağrıldığı geçerli makineye dağıtılır. Gelişmiş senaryo için yalnızca aşağıdaki değeri geçirin.
+
+/M:<Hedef sunucu adı veya Hizmet URL'i>
+	Bu bayrak belirtilmezse; paket, komutun çalıştırıldığı bilgisayara yüklenir. Hizmet URL'i şu biçimde olabilir:
+		https://<DestinationServer>:8172/MSDeploy.axd 
+	Bu biçim, hedef sunucuda IIS 7'nin yüklü olmasını ve IIS 7 Web Yönetimi Hizmeti (WMSvc) ile Web Dağıtımı İşleyicisinin ayarlanmasını gerektirir.
+	Hizmet URL'i şu biçimde de olabilir:
+		http://<DestinationServer>/MSDeployAgentService 
+	Bu biçim hedef sunucuda yönetici haklarına sahip olmayı ve Web Dağıtımı Uzak Hizmeti'nin (MsDepSvc) hedefte yüklü olmasını gerektirir. IIS 7'nin hedef sunucuya yüklenmesi gerekmez.
+
+/U:<Kullanıcı Adı>
+/P:<Parola>
+/G:<True | False>
+	Hedef sunucuda geçici bir dinleyici oluşturarak paketin dağıtıldığını belirtir. Bu hedef sunucuda herhangi bir özel yükleme gerektirmez, ancak o sunucuda yönetici olmanız gerekir. Bu bayrağın varsayılan değeri False'tır. 
+
+/A:<Basic | NTLM>
+	Kullanılacak kimlik doğrulama yönteminin türünü belirtir. Kullanılabilen değerler NTLM ve Basic'tir. wmsvc sağlayıcısı ayarı belirtilirse, varsayılan kimlik doğrulama türü Basic, aksi takdirde varsayılan kimlik doğrulama türü NTLM olur. 
+
+/L 
+	Paketin yerel IISExpress kullanıcı örneğine dağıtıldığını belirtir.
+
+[Ek msdeploy.exe bayrakları]
+	msdeploy.exe komutu ek bayrakları destekler. Bu ek bayraklardan istediğinizi "$(ProjectName).Deploy.cmd" dosyasına ekleyebilirsiniz; bayraklar yürütme sırasında msdeploy.exe'ye iletilir.
+	Veya isterseniz, "_MsDeployAdditionalFlags" ortam değişkenini ayarlayarak ek bayrakları belirtebilirsiniz. Bu ayarlar bu toplu dosya tarafından kullanılır.
+	Not: Eşittir (=) işareti içeren bir bayrak değeri, aşağıdaki örnekte görüldüğü gibi çift tırnak içine alınmalıdır, böylece pakete eklenmiş olan veritabanlarının dağıtımı adımı atlanır:
+		"-skip:objectName=dbFullSql" 
+
+===========================
+Ortama Özgü Ayarlar:
+--------------------------
+
+	Her dağıtım ortamı için uygulamaya özgü ayarları özelleştirmek üzere (örneğin, IIS uyulama adı, fiziksel yol ve herhangi bir bağlantı dizesi), şu dosyada ayarları düzenleyin: 
+		 "TaxBill.SetParameters.xml"
+===========================
+Bu dağıtım komut dosyası hakkında daha fazla bilgi için şu adresi ziyaret edin:	https://go.microsoft.com/fwlink/?LinkID=183544
+
